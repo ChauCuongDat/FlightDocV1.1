@@ -11,7 +11,9 @@ namespace FlightDocV1._1.Models
         public DateTime CreatedDate { get; set; }
         public string CreatorEmail { get; set; }
         public string Note { get; set; }
-        public ICollection<UserSection>? UserSections { get; set; }
-        public ICollection<Permission>? Permissions { get; set; }
+        //Connection
+        public ICollection<UserSection> UserSections { get; set; }
+        public ICollection<Permission> Permissions { get; set; }
+        public ICollection<DocumentPermission> DocumentPermissions { get; set; }
     }
 }

@@ -11,6 +11,9 @@ namespace FlightDocV1._1.Models
         public string FileAddress { get; set; }
         public DateTime UpdatedDate { get; set; }
         public string UpdaterEmail { get; set; }
+
+        //ForeignKey
+        public int DocumentID { get; set; }
         [ForeignKey("DocumentID")]
         public Document Document { get; set; }
     }

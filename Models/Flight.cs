@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
 
 namespace FlightDocV1._1.Models
 {
@@ -12,8 +13,10 @@ namespace FlightDocV1._1.Models
         public string To_Location { get; set;}
         public DateTime From_Time { get; set; }
         public DateTime To_Time { get; set;}
+        public string Signature { get; set; }
 
-        public Document Document { get; set; }
+        //Connection
+        public ICollection<Document> Documents { get; set; }
 
     }
 }
