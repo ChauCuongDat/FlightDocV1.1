@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlightDocV1._1.Migrations
 {
     [DbContext(typeof(FlightDocContext))]
-    [Migration("20231029144718_FlightDocV1")]
+    [Migration("20231101060240_FlightDocV1")]
     partial class FlightDocV1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,6 +65,12 @@ namespace FlightDocV1._1.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("NewestVersion")
+                        .HasColumnType("real");
+
+                    b.Property<int>("NewestVersionID")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserSectionID")
                         .HasColumnType("int");
 
@@ -74,6 +80,9 @@ namespace FlightDocV1._1.Migrations
                         .IsUnique();
 
                     b.HasIndex("FlightID");
+
+                    b.HasIndex("UserSectionID")
+                        .IsUnique();
 
                     b.ToTable("Documents");
                 });
@@ -244,9 +253,6 @@ namespace FlightDocV1._1.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserSectionID")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("GroupID");
@@ -257,9 +263,7 @@ namespace FlightDocV1._1.Migrations
                     b.HasIndex("UserID")
                         .IsUnique();
 
-                    b.HasIndex("UserSectionID");
-
-                    b.ToTable("UsersSection");
+                    b.ToTable("UserSections");
                 });
 
             modelBuilder.Entity("FlightDocV1._1.Models.Version", b =>
@@ -282,8 +286,8 @@ namespace FlightDocV1._1.Migrations
                     b.Property<string>("UpdaterEmail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VersionNum")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<float>("VersionNum")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
@@ -313,9 +317,17 @@ namespace FlightDocV1._1.Migrations
                         .WithMany("Documents")
                         .HasForeignKey("FlightID");
 
+                    b.HasOne("FlightDocV1._1.Models.UserSection", "UserSection")
+                        .WithOne("Document")
+                        .HasForeignKey("FlightDocV1._1.Models.Document", "UserSectionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("DocType");
 
                     b.Navigation("Flight");
+
+                    b.Navigation("UserSection");
                 });
 
             modelBuilder.Entity("FlightDocV1._1.Models.DocumentPermission", b =>
@@ -370,12 +382,6 @@ namespace FlightDocV1._1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FlightDocV1._1.Models.Document", "Document")
-                        .WithMany("UserSections")
-                        .HasForeignKey("UserSectionID");
-
-                    b.Navigation("Document");
-
                     b.Navigation("Group");
 
                     b.Navigation("Role");
@@ -404,8 +410,6 @@ namespace FlightDocV1._1.Migrations
             modelBuilder.Entity("FlightDocV1._1.Models.Document", b =>
                 {
                     b.Navigation("DocumentPermissions");
-
-                    b.Navigation("UserSections");
 
                     b.Navigation("Versions");
                 });
@@ -437,6 +441,8 @@ namespace FlightDocV1._1.Migrations
             modelBuilder.Entity("FlightDocV1._1.Models.UserSection", b =>
                 {
                     b.Navigation("DocTypes");
+
+                    b.Navigation("Document");
                 });
 #pragma warning restore 612, 618
         }

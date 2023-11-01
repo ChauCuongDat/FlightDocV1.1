@@ -19,7 +19,7 @@ namespace FlightDocV1._1.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserSection> UsersSection { get; set; }
-        public DbSet<Version> Version { get; set; }
+        public DbSet<UserSection> UserSections { get; set; }
+        public DbSet<Version> Versions { get; set; }
     }
 }

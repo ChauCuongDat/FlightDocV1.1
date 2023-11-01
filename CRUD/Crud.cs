@@ -45,9 +45,12 @@ namespace FlightDocV1._1.CRUD
         }
 
         //Document CRUD
-        public string AddDocument(Document document)
+        public string AddDocument(Document document, Version version)
         {
+            document.NewestVersion = 1.0F;
             _context.Documents.Add(document);
+            document.NewestVersionID = addVersion(version, document.Id, document.NewestVersion);
+            _context.Documents.Update(document);
             _context.SaveChanges();
             return "Document added";
         }
@@ -197,7 +200,14 @@ namespace FlightDocV1._1.CRUD
             return "Role notfound";
         }
 
-        //User RU
+        //User CRU
+        public string AddUser(User user)
+        {
+            user.Deactivated = false;
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            return "User added";
+        }
         public List<User> GetUsers()
         {
             return _context.Users.ToList();
@@ -213,27 +223,29 @@ namespace FlightDocV1._1.CRUD
         //User Section RU
         public List<UserSection> GetUserSections()
         {
-            return _context.UsersSection.ToList();
+            return _context.UserSections.ToList();
         }
 
         public string UpdateUserSection(UserSection userSection)
         {
-            _context.UsersSection.Update(userSection);
+            _context.UserSections.Update(userSection);
             _context.SaveChanges();
             return "User section updated";
         }
 
         //Version CR
-        public string addVersion(Version version)
+        public int addVersion(Version version, int docID, float versionNum)
         {
-            _context.Version.Add(version);
+            version.DocumentID = docID;
+            version.VersionNum = versionNum;
+            _context.Versions.Add(version);
             _context.SaveChanges();
-            return "New version added";
+            return version.Id;
         }
 
         public List<Version> GetVersions()
         {
-            return _context.Version.ToList();
+            return _context.Versions.ToList();
         }
     }
 }

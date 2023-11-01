@@ -8,6 +8,8 @@ namespace FlightDocV1._1.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
+        public int NewestVersionID { get; set; }
+        public float NewestVersion {  get; set; }
 
         //Foreignkey
         public int? FlightID { get; set; }
@@ -16,7 +18,7 @@ namespace FlightDocV1._1.Models
 
         public int UserSectionID { get; set; }
         [ForeignKey("UserSectionID")]
-        public ICollection<UserSection> UserSections { get; set; }
+        public UserSection UserSection { get; set; }
 
         public int DocTypeID { get; set; }
         [ForeignKey("DocTypeID")]
