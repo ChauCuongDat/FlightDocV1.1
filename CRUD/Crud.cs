@@ -60,8 +60,11 @@ namespace FlightDocV1._1.CRUD
             return _context.Documents.ToList();
         }
 
-        public string UpdateDocument(Document document)
+        public string UpdateDocument( Document document, Version version)
         {
+            document.NewestVersion = document.NewestVersion + 0.1F;
+            _context.Documents.Update(document);
+            document.NewestVersionID = addVersion(version, document.Id, document.NewestVersion);
             _context.Documents.Update(document);
             _context.SaveChanges();
             return "Document updated";
