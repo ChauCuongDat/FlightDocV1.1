@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FlightDocV1._1.Data;
+using FlightDocV1._1.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,13 +10,21 @@ namespace FlightDocV1._1.Controllers
 {
     public class TokenController : Controller
     {
+        private readonly FlightDocContext _context;
+        public TokenController(FlightDocContext docContext)
+        {
+            this._context = docContext;
+        }
+
         [HttpPost]
         [Route("Token")]
-        public IActionResult AdminToken()
+        public IActionResult Token(UserSection userSection)
         {
+            Role role = _context.Roles.Find(userSection.RoleID);
+
             var claims = new List<Claim>
             {
-                new Claim("Id","0")
+                new Claim("Role",role.Name)
             };
             var claimsIdentity = new ClaimsIdentity(claims, "MyAuthenticateType");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);

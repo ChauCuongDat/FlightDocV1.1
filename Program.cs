@@ -38,7 +38,25 @@ builder.Services.AddAuthentication(x=>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", p => p.RequireClaim("Role", "admin"));
+    options.AddPolicy("Office", p => p.RequireClaim("Role", "office"));
+    options.AddPolicy("Pilot", p => p.RequireClaim("Role", "pilot"));
+    options.AddPolicy("Crew", p => p.RequireClaim("Role", "crew"));
+
+    options.AddPolicy("Admin and Office", p =>
+    {
+        p.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Role" && c.Value == "admin") ||
+                                      context.User.HasClaim(c => c.Type == "Role" && c.Value == "office"));
+    });
+    options.AddPolicy("Admin, Pilot and Crew", p =>
+    {
+        p.RequireAssertion(context => context.User.HasClaim(c => c.Type == "Role" && c.Value == "admin") ||
+                                      context.User.HasClaim(c => c.Type == "Role" && c.Value == "pilot") ||
+                                      context.User.HasClaim(c => c.Type == "Role" && c.Value == "crew"));
+    });
+});
 
 var app = builder.Build();
 

@@ -9,6 +9,7 @@ namespace FlightDocV1._1.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Note { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         //Foreignkey
         public int? UserSectionID { get; set; }

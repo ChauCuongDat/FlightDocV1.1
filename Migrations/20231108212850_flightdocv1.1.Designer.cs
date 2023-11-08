@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlightDocV1._1.Migrations
 {
     [DbContext(typeof(FlightDocContext))]
-    [Migration("20231101060240_FlightDocV1")]
-    partial class FlightDocV1
+    [Migration("20231108212850_flightdocv1.1")]
+    partial class flightdocv11
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,9 @@ namespace FlightDocV1._1.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -61,6 +64,9 @@ namespace FlightDocV1._1.Migrations
 
                     b.Property<int?>("FlightID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

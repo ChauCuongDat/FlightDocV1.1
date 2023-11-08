@@ -1,5 +1,9 @@
 ﻿using FlightDocV1._1.Data;
 using FlightDocV1._1.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Security;
+using System.Text.RegularExpressions;
+using Group = FlightDocV1._1.Models.Group;
 using Version = FlightDocV1._1.Models.Version;
 
 namespace FlightDocV1._1.CRUD
@@ -20,7 +24,7 @@ namespace FlightDocV1._1.CRUD
             return "Document type added";
         }
 
-        public List<DocType> GetDocType ()
+        public List<DocType> GetDocTypes ()
         {
             return _context.DocTypes.ToList();
         }
@@ -45,10 +49,15 @@ namespace FlightDocV1._1.CRUD
         }
 
         //Document CRUD
-        public string AddDocument(Document document, Version version)
+        public string AddDocument(Document document, string fileAddress)
         {
+            Version version = new Version();
             document.NewestVersion = 1.0F;
+            document.LastModified = DateTime.Now;
             _context.Documents.Add(document);
+            version.VersionNum = 1.0F;
+            version.UpdatedDate = DateTime.Now;
+            version.FileAddress = fileAddress;
             document.NewestVersionID = addVersion(version, document.Id, document.NewestVersion);
             _context.Documents.Update(document);
             _context.SaveChanges();
@@ -60,10 +69,15 @@ namespace FlightDocV1._1.CRUD
             return _context.Documents.ToList();
         }
 
-        public string UpdateDocument( Document document, Version version)
+        public string UpdateDocument(int docID, string fileAddress)
         {
+            Document document = _context.Documents.Find(docID);
+            Version version = new Version();
             document.NewestVersion = document.NewestVersion + 0.1F;
-            _context.Documents.Update(document);
+            document.LastModified = DateTime.Now;
+            version.VersionNum = document.NewestVersion;
+            version.UpdatedDate = DateTime.Now;
+            version.FileAddress = fileAddress;
             document.NewestVersionID = addVersion(version, document.Id, document.NewestVersion);
             _context.Documents.Update(document);
             _context.SaveChanges();
@@ -114,7 +128,13 @@ namespace FlightDocV1._1.CRUD
             return "Document Permision not found";
         }
 
-        //Flight R
+        //Flight CR
+        public string AddFlight(Flight Flight)
+        {
+            _context.Flights.Add(Flight);
+            _context.SaveChanges();
+            return "Flight added";
+        }
         public List<Flight> GetFlight()
         {
             return _context.Flights.ToList();
@@ -130,7 +150,10 @@ namespace FlightDocV1._1.CRUD
 
         public List<Group> GetGroups()
         {
-            return _context.Groups.ToList();
+            return _context.Groups
+                .Include(i => i.UserSections)
+                .Include(i => i.Permissions)
+                .ToList();
         }
 
         public string UpdateGroup(Group group)
@@ -153,8 +176,12 @@ namespace FlightDocV1._1.CRUD
         }
 
         //Permission CRU
-        public string AddPermission(Permission permission)
+        public string AddPermission(int docTypeId, int GroupId, int level)
         {
+            Permission permission = new Permission();
+            permission.DocTypeID = docTypeId;
+            permission.GroupID = GroupId;
+            permission.Level = level;
             _context.Permissions.Add(permission);
             _context.SaveChanges();
             return "Permission added";
@@ -165,8 +192,18 @@ namespace FlightDocV1._1.CRUD
             return _context.Permissions.ToList();
         }
 
-        public string UpdatePermission(Permission permission)
+        public string UpdatePermission(int docTypeId, int groupId, int level)
         {
+            Permission permission = new Permission();
+            foreach (Permission i in _context.Permissions)
+            {
+                if (i.DocTypeID == docTypeId && i.GroupID == groupId)
+                {
+                    permission = i;
+                    permission.Level = level;
+                    break;
+                }
+            }
             _context.Permissions.Update(permission);
             _context.SaveChanges();
             return "Permission updated";
@@ -204,10 +241,14 @@ namespace FlightDocV1._1.CRUD
         }
 
         //User CRU
-        public string AddUser(User user)
+        public string AddUser(User user, string name)
         {
             user.Deactivated = false;
             _context.Users.Add(user);
+            UserSection userSection = new UserSection();
+            userSection.Name = name;
+            userSection.UserID=user.Id;
+            AddUserSection(userSection);
             _context.SaveChanges();
             return "User added";
         }
@@ -223,7 +264,13 @@ namespace FlightDocV1._1.CRUD
             return "UserUpdated";
         }
 
-        //User Section RU
+        //User Section CRU
+        public string AddUserSection(UserSection userSection)
+        {
+            _context.UserSections.Add(userSection);
+            _context.SaveChanges();
+            return "UserSection added";
+        }
         public List<UserSection> GetUserSections()
         {
             return _context.UserSections.ToList();

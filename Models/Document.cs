@@ -10,6 +10,7 @@ namespace FlightDocV1._1.Models
         public string Name { get; set; }
         public int NewestVersionID { get; set; }
         public float NewestVersion {  get; set; }
+        public DateTime LastModified { get; set; }
 
         //Foreignkey
         public int? FlightID { get; set; }

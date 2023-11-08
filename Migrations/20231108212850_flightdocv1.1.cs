@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FlightDocV1._1.Migrations
 {
-    public partial class FlightDocV1 : Migration
+    public partial class flightdocv11 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -113,6 +113,7 @@ namespace FlightDocV1._1.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserSectionID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -134,6 +135,7 @@ namespace FlightDocV1._1.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NewestVersionID = table.Column<int>(type: "int", nullable: false),
                     NewestVersion = table.Column<float>(type: "real", nullable: false),
+                    LastModified = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FlightID = table.Column<int>(type: "int", nullable: true),
                     UserSectionID = table.Column<int>(type: "int", nullable: false),
                     DocTypeID = table.Column<int>(type: "int", nullable: false)
