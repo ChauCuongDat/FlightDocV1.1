@@ -25,11 +25,6 @@ public class Query
             .OrderByDescending(i => i.LastModified).ToList();
     }
 
-    //public Version GetDocNewsestVersion(int NewestVersionID)
-    //{
-    //    return _context.Versions.Find(NewestVersionID);
-    //}
-
     public List<Flight> GetCurrentFlight()
     {
         return _context.Flights
@@ -65,6 +60,10 @@ public class Query
             .Include(i => i.Document)
             .Where(i => i.DocumentID == docID).ToList();
     }
+    public Version GetNewestVersionOfDoc(int NewestVersionId)
+    {
+        return _context.Versions.Find(NewestVersionId);
+    }
     public List<DocumentPermission> GetDocPermitsOfDoc(int docID)
     {
         return _context.DocumentPermissions
@@ -85,10 +84,7 @@ public class Query
             .Include(i => i.Flight)
             .Where(i => i.UserSectionID == userSectionID).ToList();
     }
-    //public Version GetNewestVersionOfDoc(Document document)
-    //{
-    //    return _context.Versions.Find(document.NewestVersionID);
-    //}
+
     //public DocType GetDocTypeOfDoc(Document document)
     //{
     //    return _context.DocTypes.Find(document.DocTypeID);
@@ -111,19 +107,14 @@ public class Query
             .Where(i => i.DocTypeID ==  DocTypeID).ToList();
     }
 
-    //Group List
-    //  Use GetGroups to get list of existing group
     public Boolean IsRecord(int docTypeId, int groupId)
     {
-        List<Permission> permission = _context.Permissions.ToList();
-        foreach (Permission i in permission)
+        Permission permission = _context.Permissions.FirstOrDefault(i => i.DocTypeID == docTypeId && i.GroupID ==  groupId);
+        if (permission == null)
         {
-            if (i.DocTypeID == docTypeId && i.GroupID == groupId)
-            {
-                return true;
-            }
+            return false;
         }
-        return false;
+        return true;
     }
     public int GetLevelPermission(int DoctypeId, int GroupId)
     {
@@ -140,6 +131,19 @@ public class Query
         }
     }
 
+    public List<Permission> GetLevelPermissionListOfDoctype(int DoctypeId)
+    {
+        return _context.Permissions
+            .Include(i => i.DocType)
+            .Where(i => i.DocTypeID == DoctypeId).ToList();
+    }
+
+    //Group List
+    //  Use GetGroups to get list of existing group
+    public Group GetGroupById(int GroupId)
+    {
+        return _context.Groups.Find(GroupId);
+    }
     //Group Permission
     //public User GetGroupCreator(int groupID)
     //{
@@ -154,24 +158,40 @@ public class Query
             .Include(i => i.User)
             .Where(i => i.GroupID == groupID).ToList();
     }
-    public String TerminateUserSection (int userID)
+    public string AddMemberToGroup(int UserSectionId, int NewGroupId)
     {
-        _context.Users.Find(userID).Deactivated = true;
+        UserSection userSection = _context.UserSections.Find(UserSectionId);
+        userSection.GroupID = NewGroupId;
+        _context.UserSections.Update(userSection);
+        _context.SaveChanges();
+        return "User has been add to group";
+    }
+    public String TerminateUserSection (int userId)
+    {
+        _context.Users.Find(userId).Deactivated = true;
         return "User deactivated";
     }
-    public String ActivateUserSection (int userID)
+    public String ActivateUserSection (int userId)
     {
-        _context.Users.Find(userID).Deactivated = false;
+        _context.Users.Find(userId).Deactivated = false;
         return "User activated";
     }
-    public User GetUser(int userID)
-    {
-        return _context.Users.Find(userID);
-    }
+
 
     //Account Setting
+    public User GetUser(int userId)
+    {
+        return _context.Users.Find(userId);
+    }
     // Use GetUsers to get user list
-    // Use GetUser to get the specific user with userID
+    public string ChangeUserSection(int userId, int userSectionId)
+    {
+        UserSection userSection = _context.UserSections.Find (userSectionId);
+        userSection.UserID = userId;
+        _context.UserSections.Update (userSection);
+        _context.SaveChanges ();
+        return "User changed";
+    }
 
 
     //// Mobile
@@ -183,24 +203,20 @@ public class Query
     }
 
     //Flight Document
-    public List<Document> GetFilghtDoc(int flightID)
-    {
-        return _context.Documents
-            .Include(i => i.Flight)
-            .Where(i => i.FlightID == flightID).ToList();
-    }
-
-
-    //Flight confirmation
     public Flight GetFlight(int flightID)
     {
         return _context.Flights.Find(flightID);
     }
-    // Use GetFlightDocList to get doc list of flight
+    // use GetFlightDocList to get document list of flight
+
+
+    //Flight confirmation
+    // Use GetFlight to get specific flight
+    // Use GetFlightDocList to get document list of flight
     // Use GetDocNewsestVersion to get newest version of document
-    public String FlightConfirmation(string signature, int flightID)
+    public String FlightConfirmation(string signaturePath, int flightID)
     {
-        _context.Flights.Find(flightID).Signature = signature;
+        _context.Flights.Find(flightID).Signature = signaturePath;
         _context.SaveChanges();
         return "Flight Confirmed";
     }

@@ -194,19 +194,23 @@ namespace FlightDocV1._1.CRUD
 
         public string UpdatePermission(int docTypeId, int groupId, int level)
         {
-            Permission permission = new Permission();
-            foreach (Permission i in _context.Permissions)
-            {
-                if (i.DocTypeID == docTypeId && i.GroupID == groupId)
-                {
-                    permission = i;
-                    permission.Level = level;
-                    break;
-                }
-            }
+            Permission permission = _context.Permissions.FirstOrDefault(i => i.DocTypeID == docTypeId & i.GroupID == groupId);
+            permission.Level = level;
             _context.Permissions.Update(permission);
             _context.SaveChanges();
             return "Permission updated";
+        }
+
+        public string DeletePermission(int docTypeId, int groupId)
+        {
+            Permission permission = _context.Permissions.FirstOrDefault(i => i.DocTypeID == docTypeId & i.GroupID == groupId);
+            if (permission == null)
+            {
+                return "No permission found";
+            }
+            _context.Permissions.Remove(permission);
+            _context.SaveChanges();
+            return "Permission deleted";
         }
 
         //Role CRUD

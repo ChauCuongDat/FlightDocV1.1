@@ -79,30 +79,40 @@ namespace FlightDocV1._1.Controllers
             return View();
         }
 
-        public ActionResult DocTypeEdit(DocType docType)
+        public ActionResult AddNewDoctype(DocType Doctype)
         {
-            ViewData["Get doctype"] = _query.GetDocType(docType.Id);
-            _crud.UpdateDocType(docType);
-            return View();
-        }
-        public ActionResult GroupPermision(int doctypeID, int level)
-        {
-            ViewData["Get group list"] = _crud.GetGroups();
-            foreach (Group g in _crud.GetGroups())
-            {
-                ViewData["Get level permision"] = _query.GetLevelPermission(doctypeID, g.Id);
-                if (_query.IsRecord(doctypeID,g.Id) == false)
-                {
-                    _crud.AddPermission(doctypeID, g.Id, level);
-                }
-                _crud.UpdatePermission(doctypeID, g.Id, level);
-            }
+            _crud.AddDocType(Doctype);
             return View();
         }
 
-        public ActionResult AddDocType(DocType type)
+        public ActionResult DocTypeInformation(int doctypeId)
         {
-            _crud.AddDocType(type);
+            ViewData["Get doctype"] = _query.GetDocType(doctypeId);
+            ViewData["Get group list"] = _crud.GetGroups();
+            ViewData["Get level permision list"] = _query.GetLevelPermissionListOfDoctype(doctypeId);
+            return View();
+        }
+
+        public ActionResult DocTypeEdit(DocType docType)
+        {
+            _crud.UpdateDocType(docType);
+            return View();
+        }
+
+        public ActionResult ChangeGroupPermisionLevel(int doctypeID, int groupId,int newLevel)
+        {
+            if (newLevel == 0)
+            {
+                _crud.DeletePermission(doctypeID,groupId);
+            }
+            else if(_query.IsRecord(doctypeID, groupId) == true)
+            {
+                _crud.UpdatePermission(doctypeID,groupId,newLevel);
+            }
+            else
+            {
+                _crud.AddPermission(doctypeID,groupId,newLevel);
+            }
             return View();
         }
 
@@ -118,10 +128,59 @@ namespace FlightDocV1._1.Controllers
             return View();
         }
 
-        public ActionResult EditGroup(int GroupID, Group group)
+        public ActionResult GroupInfo(int GroupId)
+        {
+            ViewData["Get group information"] = _query.GetGroupById(GroupId);
+            ViewData["Get member list"] = _query.GetListOfMember(GroupId);
+            return View();
+        }
+
+        public ActionResult EditGroup(Group group)
         {
             _crud.UpdateGroup(group);
-            ViewData["Get User List"] = _query.GetListOfMember(GroupID);
+            return View();
+        }
+
+        public ActionResult DeleteGroup(int GroupId)
+        {
+            _crud.DeleteGroup(GroupId);
+            return View();
+        }
+
+        public ActionResult AddMember(int userID, int groupId)
+        {
+            _query.AddMemberToGroup(userID, groupId);
+            return View();
+        }
+
+        public ActionResult GetListOfUser()
+        {
+            ViewData["Get list of user"] = _crud.GetUsers();
+            return View();
+        }
+
+        public ActionResult TerminateUser (int userId)
+        {
+            _query.TerminateUserSection(userId);
+            return View();
+        }
+
+        public ActionResult ActivateUser(int userId)
+        {
+            _query.ActivateUserSection(userId);
+            return View();
+        }
+
+        public ActionResult AccountSetting (int userId)
+        {
+            ViewData["Get user information"] = _query.GetUser(userId);
+            ViewData["Get user list"] = _crud.GetUsers();
+            return View();
+        }
+
+        public ActionResult ChangeUser(int newUserId, int userSectionID)
+        {
+            _query.ChangeUserSection(newUserId, userSectionID);
             return View();
         }
 
