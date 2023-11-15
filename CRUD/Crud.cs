@@ -19,6 +19,7 @@ namespace FlightDocV1._1.CRUD
         //Document Type CRUD
         public string AddDocType (DocType type)
         {
+            type.CreatedDate = DateTime.Now;
             _context.DocTypes.Add(type);
             _context.SaveChanges();
             return "Document type added";
@@ -55,6 +56,7 @@ namespace FlightDocV1._1.CRUD
             document.NewestVersion = 1.0F;
             document.LastModified = DateTime.Now;
             _context.Documents.Add(document);
+            _context.SaveChanges();
             version.VersionNum = 1.0F;
             version.UpdatedDate = DateTime.Now;
             version.FileAddress = fileAddress;
@@ -245,14 +247,10 @@ namespace FlightDocV1._1.CRUD
         }
 
         //User CRU
-        public string AddUser(User user, string name)
+        public string AddUser(User user)
         {
             user.Deactivated = false;
             _context.Users.Add(user);
-            UserSection userSection = new UserSection();
-            userSection.Name = name;
-            userSection.UserID=user.Id;
-            AddUserSection(userSection);
             _context.SaveChanges();
             return "User added";
         }
@@ -269,8 +267,9 @@ namespace FlightDocV1._1.CRUD
         }
 
         //User Section CRU
-        public string AddUserSection(UserSection userSection)
+        public string AddUserSection(UserSection userSection, string name)
         {
+            userSection.Name = name;
             _context.UserSections.Add(userSection);
             _context.SaveChanges();
             return "UserSection added";

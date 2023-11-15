@@ -18,7 +18,7 @@ namespace FlightDocV1._1.Models
         [ForeignKey("GroupID")]
         public Group Group { get; set; }
 
-        public int RoleID { get; set; }
+        public int? RoleID { get; set; }
         [ForeignKey("RoleID")]
         public Role Role { get; set; }
 

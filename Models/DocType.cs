@@ -18,6 +18,6 @@ namespace FlightDocV1._1.Models
 
         //Connection
         public ICollection<Permission> Permissions { get; set; }
-        public Document Document { get; set; }
+        public ICollection<Document> Document { get; set; }
     }
 }

@@ -251,7 +251,7 @@ namespace FlightDocV1._1.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleID")
+                    b.Property<int?>("RoleID")
                         .HasColumnType("int");
 
                     b.Property<int>("UserID")
@@ -262,7 +262,8 @@ namespace FlightDocV1._1.Migrations
                     b.HasIndex("GroupID");
 
                     b.HasIndex("RoleID")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[RoleID] IS NOT NULL");
 
                     b.HasIndex("UserID")
                         .IsUnique();
@@ -376,9 +377,7 @@ namespace FlightDocV1._1.Migrations
 
                     b.HasOne("FlightDocV1._1.Models.Role", "Role")
                         .WithOne("UserSection")
-                        .HasForeignKey("FlightDocV1._1.Models.UserSection", "RoleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FlightDocV1._1.Models.UserSection", "RoleID");
 
                     b.HasOne("FlightDocV1._1.Models.User", "User")
                         .WithOne("UserSection")

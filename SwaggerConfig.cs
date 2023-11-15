@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FlightDocV1._1
 {
-    public class Swagger : IConfigureOptions<SwaggerGenOptions>
+    public class SwaggerConfig : IConfigureOptions<SwaggerGenOptions>
     {
         public void Configure(SwaggerGenOptions options)
         {

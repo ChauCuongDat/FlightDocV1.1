@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FlightDocV1._1.Models;
 
@@ -220,4 +221,28 @@ public class Query
         _context.SaveChanges();
         return "Flight Confirmed";
     }
+
+
+    //Login and register
+    // Use AddUser to register
+    public string AssignUserSection(int userId, int userSectionId)
+    {
+        UserSection userSection = _context.UserSections.Find(userSectionId);
+        if (userSection == null) { return "No user section found"; }
+        userSection.UserID = userId;
+        _context.UserSections.Update(userSection);
+        _context.SaveChanges();
+        return ("Assigned");
+    }
+    public string AssignRole(int roleId, int userSectionId)
+    {
+        UserSection userSection = _context.UserSections.Find(userSectionId);
+        if (userSection == null) { return "No user section found"; }
+        userSection.RoleID = roleId;
+        _context.UserSections.Update(userSection);
+        _context.SaveChanges();
+        return "Role added";
+    }
+
+
 }

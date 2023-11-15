@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FlightDocV1._1.Migrations
 {
-    public partial class flightdocv11 : Migration
+    public partial class FlightDocV12 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -81,7 +81,7 @@ namespace FlightDocV1._1.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserID = table.Column<int>(type: "int", nullable: false),
                     GroupID = table.Column<int>(type: "int", nullable: true),
-                    RoleID = table.Column<int>(type: "int", nullable: false)
+                    RoleID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,8 +95,7 @@ namespace FlightDocV1._1.Migrations
                         name: "FK_UserSections_Roles_RoleID",
                         column: x => x.RoleID,
                         principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserSections_Users_UserID",
                         column: x => x.UserID,
@@ -287,7 +286,8 @@ namespace FlightDocV1._1.Migrations
                 name: "IX_UserSections_RoleID",
                 table: "UserSections",
                 column: "RoleID",
-                unique: true);
+                unique: true,
+                filter: "[RoleID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSections_UserID",
